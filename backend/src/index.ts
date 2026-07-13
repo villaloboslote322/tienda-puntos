@@ -10,6 +10,8 @@ import authRoutes from './routes/auth';
 import clientesRoutes from './routes/clientes';
 import transaccionesRoutes from './routes/transacciones';
 import reglasRoutes from './routes/reglas';
+import premiosRoutes from './routes/premios';
+import canjesRoutes from './routes/canjes';
 import { errorHandler } from './middleware/errorHandler';
 import logger from './utils/logger';
 
@@ -26,6 +28,10 @@ app.get('/health', (req, res) => {
 // Auth routes
 app.use('/api/auth', authRoutes);
 
+// Canjes routes (must be before clientes to avoid being caught by /:id)
+app.use('/api/clientes/canjes', canjesRoutes);
+app.use('/api/admin/canjes', canjesRoutes);
+
 // Clientes routes
 app.use('/api/clientes', clientesRoutes);
 
@@ -34,6 +40,9 @@ app.use('/api/transacciones', transaccionesRoutes);
 
 // Admin Reglas routes
 app.use('/api/admin/reglas', reglasRoutes);
+
+// Premios routes
+app.use('/api/premios', premiosRoutes);
 
 // Error handler (must be last)
 app.use(errorHandler);
