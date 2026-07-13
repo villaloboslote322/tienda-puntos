@@ -7,6 +7,9 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/auth';
+import clientesRoutes from './routes/clientes';
+import transaccionesRoutes from './routes/transacciones';
+import reglasRoutes from './routes/reglas';
 import { errorHandler } from './middleware/errorHandler';
 import logger from './utils/logger';
 
@@ -22,6 +25,15 @@ app.get('/health', (req, res) => {
 
 // Auth routes
 app.use('/api/auth', authRoutes);
+
+// Clientes routes
+app.use('/api/clientes', clientesRoutes);
+
+// Transacciones routes
+app.use('/api/transacciones', transaccionesRoutes);
+
+// Admin Reglas routes
+app.use('/api/admin/reglas', reglasRoutes);
 
 // Error handler (must be last)
 app.use(errorHandler);
