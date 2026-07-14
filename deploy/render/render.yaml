@@ -1,0 +1,64 @@
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: tienda-puntos-db
+    runtime: docker
+    plan: starter
+    env:
+      - key: POSTGRES_DB
+        value: tienda_puntos
+      - key: POSTGRES_USER
+        value: postgres
+      - key: POSTGRES_PASSWORD
+        sync: false
+    disk:
+      name: postgres_data
+      mountPath: /var/lib/postgresql/data
+      sizeGb: 10
+
+  # Backend API Service
+  - type: web
+    name: tienda-puntos-backend
+    runtime: docker
+    plan: standard
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromService:
+          name: tienda-puntos-db
+          type: pserv
+          property: connectionString
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRE
+        value: 24h
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_PHONE_NUMBER
+        sync: false
+      - key: LOG_LEVEL
+        value: info
+    routes:
+      - path: /
+        matchType: prefix
+
+  # Web Admin Frontend Service
+  - type: web
+    name: tienda-puntos-web-admin
+    runtime: docker
+    plan: standard
+    autoDeploy: true
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: tienda-puntos-backend
+          type: web
+          property: url
+    routes:
+      - path: /
+        matchType: prefix
