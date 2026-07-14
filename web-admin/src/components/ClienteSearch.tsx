@@ -19,14 +19,35 @@ interface Cliente {
 export default function ClienteSearch({ token, onSelectCliente }: ClienteSearchProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [results, setResults] = useState<Cliente[]>([])
-  const [loading, setLoading] = useState(false)
-  const [searched, setSearched] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [allClientes, setAllClientes] = useState<Cliente[]>([])
+
+  // Load all clientes on mount
+  React.useEffect(() => {
+    fetchAllClientes()
+  }, [token])
+
+  const fetchAllClientes = async () => {
+    setLoading(true)
+    try {
+      const response = await api.get('/api/clientes', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const clientes = Array.isArray(response.data) ? response.data : []
+      setAllClientes(clientes)
+      setResults(clientes)
+    } catch (err) {
+      setAllClientes([])
+      setResults([])
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!searchTerm.trim()) {
-      setResults([])
-      setSearched(false)
+      setResults(allClientes)
       return
     }
 
@@ -37,10 +58,8 @@ export default function ClienteSearch({ token, onSelectCliente }: ClienteSearchP
         headers: { Authorization: `Bearer ${token}` },
       })
       setResults(response.data)
-      setSearched(true)
     } catch (err) {
       setResults([])
-      setSearched(true)
     } finally {
       setLoading(false)
     }
@@ -48,26 +67,47 @@ export default function ClienteSearch({ token, onSelectCliente }: ClienteSearchP
 
   return (
     <div className="space-y-4">
-      <form onSubmit={handleSearch} className="flex gap-2">
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Buscar por teléfono, nombre o DNI..."
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg disabled:bg-gray-400"
-        >
-          {loading ? 'Buscando...' : 'Buscar'}
-        </button>
-      </form>
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">Buscar Cliente (opcional)</label>
+        <form onSubmit={handleSearch} className="flex gap-2">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Buscar por teléfono, nombre o DNI..."
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg disabled:bg-gray-400"
+          >
+            {loading ? 'Buscando...' : 'Buscar'}
+          </button>
+          {searchTerm && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearchTerm('')
+                setResults(allClientes)
+              }}
+              className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg"
+            >
+              Ver todos
+            </button>
+          )}
+        </form>
+      </div>
 
-      {searched && results.length === 0 && (
+      {results.length === 0 && !loading && (
         <div className="p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
-          No se encontraron clientes
+          No hay clientes disponibles
+        </div>
+      )}
+
+      {loading && (
+        <div className="p-4 text-center text-gray-600">
+          Cargando clientes...
         </div>
       )}
 
