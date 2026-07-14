@@ -1,38 +1,16 @@
-FROM node:18-alpine AS builder
-
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-COPY tsconfig.json ./
-
-# Install dependencies
-RUN npm ci
-
-# Copy source code
-COPY src ./src
-COPY prisma ./prisma
-
-# Build TypeScript
-RUN npm run build
-
-# Production stage
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy package files
 COPY package*.json ./
+COPY tsconfig.json ./
 
-# Install production dependencies only
-RUN npm ci --omit=dev
+RUN npm ci
 
-# Copy built application from builder
-COPY --from=builder /app/dist ./dist
+COPY src ./src
 COPY prisma ./prisma
 
-# Expose port
-EXPOSE 3001
+RUN npm run build
 
-# Start application
+EXPOSE 3001
 CMD ["npm", "run", "start"]
