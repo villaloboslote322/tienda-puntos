@@ -22,7 +22,7 @@ export default function Login({ onLogin }: LoginProps) {
         password,
       })
 
-      const { token, usuario } = response.data.data
+      const { token, usuario } = response.data
       onLogin(token, usuario)
     } catch (err: any) {
       setError(err.response?.data?.message || 'Error logging in')
