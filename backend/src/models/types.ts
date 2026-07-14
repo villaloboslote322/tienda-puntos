@@ -50,8 +50,7 @@ export interface Premio {
   nombre: string;
   descripcion?: string;
   puntosRequeridos: number;
-  valor: number;
-  cantidad?: number;
+  vigencia?: Date;
   activo: boolean;
   createdAt: Date;
   updatedAt: Date;
