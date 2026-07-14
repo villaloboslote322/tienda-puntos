@@ -11,8 +11,7 @@ const premioSchema = z.object({
   nombre: z.string().min(2),
   descripcion: z.string().optional(),
   puntosRequeridos: z.number().positive(),
-  valor: z.number().positive(),
-  cantidad: z.number().optional(),
+  vigencia: z.string().datetime().optional(),
 });
 
 // POST /api/premios - create prize (admin only)
@@ -56,6 +55,18 @@ router.put('/:id', authMiddleware, adminOnly, async (req: Request, res: Response
     const id = String(req.params.id);
     const datos = premioSchema.partial().parse(req.body);
     const premio = await premioService.actualizarPremio(id, datos);
+    res.json(premio);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// PATCH /api/premios/:id - update prize status (admin only)
+router.patch('/:id', authMiddleware, adminOnly, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = String(req.params.id);
+    const { activo } = req.body;
+    const premio = await premioService.actualizarPremio(id, { activo });
     res.json(premio);
   } catch (error) {
     next(error);

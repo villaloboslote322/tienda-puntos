@@ -70,8 +70,7 @@ model Premio {
   nombre          String
   descripcion     String?
   puntosRequeridos Int
-  valor           Float    // monetary value in pesos
-  cantidad        Int?     // stock (null = unlimited)
+  vigencia        DateTime?  // prize expiration date
   activo          Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
