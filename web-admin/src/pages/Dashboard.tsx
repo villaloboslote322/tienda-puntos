@@ -30,16 +30,7 @@ export default function Dashboard({ token }: DashboardProps) {
   }, [token])
 
   const fetchStats = async () => {
-    try {
-      const response = await axios.get('/api/admin/dashboard/stats', {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      setStats(response.data.data)
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Error loading stats')
-    } finally {
-      setLoading(false)
-    }
+    setLoading(false)
   }
 
   const handleCreateCliente = async (e: React.FormEvent) => {
@@ -65,29 +56,7 @@ export default function Dashboard({ token }: DashboardProps) {
 
   return (
     <div className="space-y-6">
-      {error && (
-        <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
-        </div>
-      )}
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-gray-500 text-sm font-medium">Total Clientes</h3>
-          <p className="text-3xl font-bold text-gray-900">{stats.totalClientes}</p>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-gray-500 text-sm font-medium">Puntos Hoy</h3>
-          <p className="text-3xl font-bold text-blue-600">{stats.puntosHoy}</p>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-gray-500 text-sm font-medium">Canjes Pendientes</h3>
-          <p className="text-3xl font-bold text-orange-600">{stats.canjesPendientes}</p>
-        </div>
-      </div>
+      <h1 className="text-3xl font-bold">Tienda de Puntos</h1>
 
       {/* Create Cliente Form */}
       <div className="bg-white p-6 rounded-lg shadow">
@@ -147,11 +116,6 @@ export default function Dashboard({ token }: DashboardProps) {
         )}
       </div>
 
-      {/* Cliente Search */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-lg font-bold mb-4">Buscar Cliente</h2>
-        <ClienteSearch token={token} />
-      </div>
     </div>
   )
 }
