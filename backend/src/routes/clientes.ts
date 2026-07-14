@@ -43,6 +43,7 @@ router.get('/:id', authMiddleware, async (req: Request, res: Response, next: Nex
 router.post('/', authMiddleware, adminOnly, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const datos = registroClienteSchema.parse(req.body);
+    logger.info(`Parsed datos:`, { cumpleaños: datos.cumpleaños });
 
     // Check if whatsapp already exists
     const existente = await clienteService.buscarClientePorWhatsapp(datos.whatsapp);
@@ -50,12 +51,15 @@ router.post('/', authMiddleware, adminOnly, async (req: Request, res: Response, 
       throw new AppError(409, 'Cliente with this WhatsApp already registered');
     }
 
+    const cumpleañosDate = datos.cumpleaños ? new Date(datos.cumpleaños) : undefined;
+    logger.info(`Birthdate conversion:`, { original: datos.cumpleaños, converted: cumpleañosDate });
+
     const cliente = await clienteService.registroCliente({
       nombre: datos.nombre,
       whatsapp: datos.whatsapp,
       dni: datos.dni,
       email: datos.email,
-      cumpleaños: datos.cumpleaños ? new Date(datos.cumpleaños) : undefined,
+      cumpleaños: cumpleañosDate,
     });
     logger.info(`New cliente created: ${cliente.id}`);
     res.status(201).json(cliente);

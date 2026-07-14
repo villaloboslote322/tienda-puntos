@@ -15,7 +15,7 @@ export const registroClienteSchema = z.object({
   whatsapp: z.string().min(7, 'Invalid WhatsApp number'),
   dni: z.string().min(7, 'Invalid DNI'),
   email: z.string().email().optional(),
-  cumpleaños: z.string().datetime().optional(),
+  cumpleaños: z.string().optional(),
 });
 
 export const transaccionSchema = z.object({
