@@ -17,6 +17,15 @@ interface Cliente {
   cumpleaños?: string
 }
 
+interface Premio {
+  id: string
+  nombre: string
+  descripcion?: string
+  puntosRequeridos: number
+  vigencia?: string
+  activo: boolean
+}
+
 interface Stats {
   totalClientes: number
 }
@@ -24,6 +33,7 @@ interface Stats {
 export default function Dashboard({ token }: DashboardProps) {
   const [stats, setStats] = useState<Stats>({ totalClientes: 0 })
   const [clientes, setClientes] = useState<Cliente[]>([])
+  const [premios, setPremios] = useState<Premio[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showCreateForm, setShowCreateForm] = useState(false)
@@ -38,18 +48,33 @@ export default function Dashboard({ token }: DashboardProps) {
   const fetchData = async () => {
     try {
       setLoading(true)
-      const response = await api.get('/api/clientes', {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const clientesList = Array.isArray(response.data) ? response.data : []
+      const [clientesRes, premiosRes] = await Promise.all([
+        api.get('/api/clientes', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        api.get('/api/premios', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ])
+      const clientesList = Array.isArray(clientesRes.data) ? clientesRes.data : []
+      const premiosList = Array.isArray(premiosRes.data) ? premiosRes.data : []
       setClientes(clientesList)
+      setPremios(premiosList)
       setStats({ totalClientes: clientesList.length })
     } catch (err) {
-      setError('Error loading clientes')
+      setError('Error loading data')
       console.error(err)
     } finally {
       setLoading(false)
     }
+  }
+
+  const getPremiosDisponibles = (puntosCliente: number) => {
+    return premios.filter((p) => p.activo && puntosCliente >= p.puntosRequeridos)
+  }
+
+  const tieneDerechoPremio = (puntosCliente: number) => {
+    return getPremiosDisponibles(puntosCliente).length > 0
   }
 
   const handleCreateCliente = async (e: React.FormEvent) => {
@@ -178,7 +203,14 @@ export default function Dashboard({ token }: DashboardProps) {
                   className="w-full px-4 py-3 flex justify-between items-center hover:bg-gray-50 text-left"
                 >
                   <div className="flex-1">
-                    <div className="font-semibold text-gray-900">{cliente.nombre}</div>
+                    <div className="flex items-center gap-2">
+                      <div className="font-semibold text-gray-900">{cliente.nombre}</div>
+                      {tieneDerechoPremio(cliente.puntosActuales) && (
+                        <span className="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">
+                          🎁 Derecho a Premio
+                        </span>
+                      )}
+                    </div>
                     <div className="text-sm text-gray-600">{cliente.whatsapp}</div>
                   </div>
                   <div className="text-right">
@@ -226,6 +258,28 @@ export default function Dashboard({ token }: DashboardProps) {
                       </div>
                     </div>
                   </div>
+
+                  {/* Premios Disponibles */}
+                  {getPremiosDisponibles(cliente.puntosActuales).length > 0 && (
+                    <div className="px-4 py-4 bg-yellow-50 border-t border-yellow-200">
+                      <div className="text-sm font-bold text-yellow-800 mb-3">🎁 Premios Disponibles</div>
+                      <div className="space-y-2">
+                        {getPremiosDisponibles(cliente.puntosActuales).map((premio) => (
+                          <div
+                            key={premio.id}
+                            className="bg-white p-3 rounded border border-yellow-200"
+                          >
+                            <div className="font-semibold text-gray-900">{premio.nombre}</div>
+                            <div className="text-xs text-gray-600">{premio.descripcion || '—'}</div>
+                            <div className="text-xs text-yellow-700 mt-1">
+                              Requiere: <strong>{premio.puntosRequeridos} puntos</strong> (Tiene:{' '}
+                              <strong>{cliente.puntosActuales}</strong>)
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 )}
               </div>
             ))}
