@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import api from '../api'
 
 interface ClienteSearchProps {
@@ -23,7 +23,7 @@ export default function ClienteSearch({ token, onSelectCliente }: ClienteSearchP
   const [allClientes, setAllClientes] = useState<Cliente[]>([])
 
   // Load all clientes on mount
-  React.useEffect(() => {
+  useEffect(() => {
     fetchAllClientes()
   }, [token])
 
