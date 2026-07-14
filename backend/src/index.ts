@@ -29,8 +29,7 @@ app.get('/health', (req, res) => {
 // Auth routes
 app.use('/api/auth', authRoutes);
 
-// Canjes routes (must be before clientes to avoid being caught by /:id)
-app.use('/api/clientes/canjes', canjesRoutes);
+// Admin canjes routes
 app.use('/api/admin/canjes', canjesRoutes);
 
 // Clientes routes

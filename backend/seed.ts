@@ -1,18 +1,21 @@
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+import bcryptjs from 'bcryptjs';
 
 const databaseUrl = process.env.DATABASE_URL || 'file:./dev.db';
 const adapter = new PrismaBetterSqlite3({ url: databaseUrl });
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
+  const hashedPassword = await bcryptjs.hash('password123', 10);
+  
   const admin = await prisma.usuario.upsert({
     where: { email: 'admin@test.com' },
     update: {},
     create: {
       email: 'admin@test.com',
-      password: 'password123',
+      password: hashedPassword,
       nombre: 'Admin Test',
       rol: 'admin',
       activo: true,
