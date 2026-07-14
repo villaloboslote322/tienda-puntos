@@ -3,8 +3,8 @@ services:
     name: tienda-puntos-backend
     env: node
     plan: free
-    buildCommand: npm install && npm run build
-    startCommand: npm run start
+    buildCommand: npm install
+    startCommand: npm run build && npm run start
     rootDir: backend
     envVars:
       - key: NODE_ENV
