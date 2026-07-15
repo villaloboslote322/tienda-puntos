@@ -9,14 +9,21 @@ export class PremioService {
     puntosRequeridos: number;
     vigencia?: string;
   }): Promise<Premio> {
+    const premioData: any = {
+      nombre: datos.nombre,
+      puntosRequeridos: datos.puntosRequeridos,
+      activo: true,
+    };
+
+    if (datos.descripcion) {
+      premioData.descripcion = datos.descripcion;
+    }
+    if (datos.vigencia) {
+      premioData.vigencia = new Date(datos.vigencia);
+    }
+
     const premio = await prisma.premio.create({
-      data: {
-        nombre: datos.nombre,
-        descripcion: datos.descripcion,
-        puntosRequeridos: datos.puntosRequeridos,
-        vigencia: datos.vigencia ? new Date(datos.vigencia) : undefined,
-        activo: true,
-      },
+      data: premioData,
     });
     logger.info(`Prize created: ${premio.id}`);
     return premio as Premio;
