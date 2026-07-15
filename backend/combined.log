@@ -812,3 +812,13 @@
 {"level":"info","message":"Rule activated: cmrl6rmgd0002lgiflksqpgqe","timestamp":"2026-07-14T22:05:30.601Z"}
 {"level":"info","message":"Rule activated: cmrl6rmgd0002lgiflksqpgqe","timestamp":"2026-07-14T22:05:30.601Z"}
 {"level":"info","message":"Prize created: cmrl9b58u0004lgifksland0i","timestamp":"2026-07-14T23:02:39.469Z"}
+{"level":"error","message":"Error requesting canje: Error: Cliente not found","timestamp":"2026-07-15T03:59:09.328Z"}
+{"level":"error","message":"Error: Cliente not found","name":"AppError","stack":"AppError: Cliente not found\n    at C:\\Users\\Alejo Bales\\tienda-puntos\\backend\\src\\routes\\canjes.ts:25:15\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)","statusCode":404,"timestamp":"2026-07-15T03:59:09.374Z"}
+{"level":"error","message":"Error requesting canje: Error: Cliente not found","timestamp":"2026-07-15T03:59:11.147Z"}
+{"level":"error","message":"Error: Cliente not found","name":"AppError","stack":"AppError: Cliente not found\n    at C:\\Users\\Alejo Bales\\tienda-puntos\\backend\\src\\routes\\canjes.ts:25:15\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)","statusCode":404,"timestamp":"2026-07-15T03:59:11.149Z"}
+{"level":"error","message":"Error requesting canje: Error: Cliente not found","timestamp":"2026-07-15T03:59:16.266Z"}
+{"level":"error","message":"Error: Cliente not found","name":"AppError","stack":"AppError: Cliente not found\n    at C:\\Users\\Alejo Bales\\tienda-puntos\\backend\\src\\routes\\canjes.ts:25:15\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)","statusCode":404,"timestamp":"2026-07-15T03:59:16.267Z"}
+{"level":"error","message":"Error requesting canje: Error: Cliente not found","timestamp":"2026-07-15T03:59:17.641Z"}
+{"level":"error","message":"Error: Cliente not found","name":"AppError","stack":"AppError: Cliente not found\n    at C:\\Users\\Alejo Bales\\tienda-puntos\\backend\\src\\routes\\canjes.ts:25:15\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)","statusCode":404,"timestamp":"2026-07-15T03:59:17.642Z"}
+{"level":"error","message":"Error requesting canje: Error: Cliente not found","timestamp":"2026-07-15T03:59:48.718Z"}
+{"level":"error","message":"Error: Cliente not found","name":"AppError","stack":"AppError: Cliente not found\n    at C:\\Users\\Alejo Bales\\tienda-puntos\\backend\\src\\routes\\canjes.ts:25:15\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)","statusCode":404,"timestamp":"2026-07-15T03:59:48.719Z"}

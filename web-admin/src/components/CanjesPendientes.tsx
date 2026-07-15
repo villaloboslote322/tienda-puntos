@@ -98,7 +98,7 @@ export default function CanjesPendientes({ token }: CanjesPendientesProps) {
     )
   }
 
-  const clientesFiltrados = showAllClientes ? getClientesElegibles() : handleBuscar(searchValue)
+  const clientesFiltrados = showAllClientes ? clientes : handleBuscar(searchValue)
 
   const handleCanjear = async (premioId: string) => {
     if (!clienteSeleccionado) return
