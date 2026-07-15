@@ -25,6 +25,8 @@ router.post('/', authMiddleware, adminOnly, async (req: Request, res: Response, 
       throw new AppError(400, 'clienteId and premioId required');
     }
 
+    logger.info(`Creating canje: clienteId=${clienteId}, premioId=${premioId}`);
+
     try {
       const canje = await canjeService.solicitarCanje(clienteId, premioId);
       res.status(201).json(canje);

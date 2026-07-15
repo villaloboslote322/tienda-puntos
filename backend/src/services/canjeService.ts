@@ -8,7 +8,9 @@ export class CanjeService {
   async solicitarCanje(clienteId: string, premioId: string) {
     try {
       // Get cliente and verify points
+      logger.info(`Searching cliente: ${clienteId}`);
       const cliente = await clienteService.buscarCliente(clienteId);
+      logger.info(`Cliente found: ${cliente ? cliente.id : 'null'}`);
       if (!cliente) {
         throw new Error('Cliente not found');
       }
