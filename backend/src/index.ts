@@ -26,6 +26,28 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+app.get('/api/diag', async (req, res) => {
+  const prisma = require('./config/database').default;
+  try {
+    const clientCount = await prisma.cliente.count();
+    const premioCount = await prisma.premio.count();
+    const premiosActivos = await prisma.premio.count({ where: { activo: true } });
+    const canjeCount = await prisma.canje.count();
+
+    const primeraCliente = await prisma.cliente.findFirst();
+
+    res.json({
+      clientCount,
+      premioCount,
+      premiosActivos,
+      canjeCount,
+      primeraCliente: primeraCliente ? { id: primeraCliente.id, nombre: primeraCliente.nombre, puntosActuales: primeraCliente.puntosActuales } : null,
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Auth routes
 app.use('/api/auth', authRoutes);
 
