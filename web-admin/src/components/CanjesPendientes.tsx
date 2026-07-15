@@ -68,6 +68,12 @@ export default function CanjesPendientes({ token }: CanjesPendientesProps) {
       const premiosList = Array.isArray(premiosRes.data) ? premiosRes.data : []
       const canjesList = Array.isArray(canjesRes.data?.data) ? canjesRes.data.data : []
 
+      console.log('Clientes cargados:', {
+        count: clientesList.length,
+        ids: clientesList.map((c: any) => c.id),
+        sample: clientesList[0],
+      })
+
       setClientes(clientesList)
       setPremios(premiosList)
       setCanjes(canjesList)
@@ -102,6 +108,12 @@ export default function CanjesPendientes({ token }: CanjesPendientesProps) {
 
   const handleCanjear = async (premioId: string) => {
     if (!clienteSeleccionado) return
+
+    console.log('Canje request:', {
+      clienteId: clienteSeleccionado.id,
+      clienteNombre: clienteSeleccionado.nombre,
+      premioId,
+    })
 
     setCanjeando(premioId)
     setError('')
@@ -172,7 +184,15 @@ export default function CanjesPendientes({ token }: CanjesPendientesProps) {
     <div className="space-y-6">
       {error && (
         <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
+          <div className="flex justify-between items-start">
+            <div>{error}</div>
+            <button
+              onClick={fetchData}
+              className="ml-4 px-3 py-1 bg-red-500 text-white rounded text-sm whitespace-nowrap"
+            >
+              Recargar
+            </button>
+          </div>
         </div>
       )}
 
