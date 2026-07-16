@@ -6,8 +6,9 @@ import ReglasCRUD from './components/ReglasCRUD'
 import PremiosCRUD from './components/PremiosCRUD'
 import CanjesPendientes from './components/CanjesPendientes'
 import Reportes from './components/Reportes'
+import Administracion from './components/Administracion'
 
-type Page = 'login' | 'dashboard' | 'asignar-puntos' | 'reglas' | 'premios' | 'canjes' | 'reportes'
+type Page = 'login' | 'dashboard' | 'asignar-puntos' | 'reglas' | 'premios' | 'canjes' | 'reportes' | 'administracion'
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('login')
@@ -134,6 +135,16 @@ function App() {
             >
               Reportes
             </button>
+            <button
+              onClick={() => setCurrentPage('administracion')}
+              className={`px-4 py-3 text-sm font-medium ${
+                currentPage === 'administracion'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-700 hover:text-gray-900'
+              }`}
+            >
+              Administración
+            </button>
           </div>
         </div>
       </nav>
@@ -146,6 +157,9 @@ function App() {
         {currentPage === 'premios' && <PremiosCRUD token={token} />}
         {currentPage === 'canjes' && <CanjesPendientes token={token} />}
         {currentPage === 'reportes' && <Reportes token={token} />}
+        {currentPage === 'administracion' && usuario && (
+          <Administracion token={token} usuarioActual={{ usuarioId: usuario.usuarioId, email: usuario.email }} />
+        )}
       </main>
     </div>
   )

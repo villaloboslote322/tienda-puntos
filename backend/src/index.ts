@@ -13,6 +13,7 @@ import reglasRoutes from './routes/reglas';
 import premiosRoutes from './routes/premios';
 import canjesRoutes from './routes/canjes';
 import reportesRoutes from './routes/reportes';
+import usuariosRoutes from './routes/usuarios';
 import { errorHandler } from './middleware/errorHandler';
 import logger from './utils/logger';
 import { initCumpleañosJob } from './jobs/cumpleañosJob';
@@ -69,6 +70,9 @@ app.use('/api/premios', premiosRoutes);
 
 // Reportes routes
 app.use('/api/reportes', reportesRoutes);
+
+// Usuarios routes
+app.use('/api/usuarios', usuariosRoutes);
 
 // Error handler (must be last)
 app.use(errorHandler);
