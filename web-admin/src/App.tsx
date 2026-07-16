@@ -16,8 +16,17 @@ function App() {
   const [token, setToken] = useState<string | null>(null)
   const [usuario, setUsuario] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [registroDirecto, setRegistroDirecto] = useState(false)
 
   useEffect(() => {
+    // Check direct URL routes
+    if (window.location.pathname === '/registro') {
+      setCurrentPage('registro')
+      setRegistroDirecto(true)
+      setLoading(false)
+      return
+    }
+
     // Check if token exists in localStorage
     const savedToken = localStorage.getItem('admin_token')
     const savedUsuario = localStorage.getItem('admin_usuario')
@@ -58,14 +67,16 @@ function App() {
     return (
       <div>
         <RegistroCliente />
-        <div className="text-center py-4">
-          <button
-            onClick={() => setCurrentPage('login')}
-            className="text-blue-500 hover:text-blue-700 text-sm"
-          >
-            ← Volver a Login de Admin
-          </button>
-        </div>
+        {!registroDirecto && (
+          <div className="text-center py-4">
+            <button
+              onClick={() => setCurrentPage('login')}
+              className="text-blue-500 hover:text-blue-700 text-sm"
+            >
+              ← Volver a Login de Admin
+            </button>
+          </div>
+        )}
       </div>
     )
   }

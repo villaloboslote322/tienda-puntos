@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import axios from 'axios'
+import QRCode from 'qrcode.react'
 
 export default function RegistroCliente() {
   const [formData, setFormData] = useState({
@@ -13,6 +14,8 @@ export default function RegistroCliente() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [clienteRegistrado, setClienteRegistrado] = useState<any>(null)
+  const [mostraQR, setMostraQR] = useState(false)
+  const qrRef = useRef<any>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -20,6 +23,16 @@ export default function RegistroCliente() {
       ...prev,
       [name]: value,
     }))
+  }
+
+  const descargarQR = () => {
+    if (qrRef.current) {
+      const url = qrRef.current.toDataURL('image/png')
+      const link = document.createElement('a')
+      link.href = url
+      link.download = 'qr-registro-tienda-puntos.png'
+      link.click()
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -225,6 +238,40 @@ export default function RegistroCliente() {
                 * Campos requeridos
               </p>
             </>
+          )}
+        </div>
+
+        {/* Sección QR */}
+        <div className="bg-blue-50 px-6 py-4 border-t">
+          <button
+            onClick={() => setMostraQR(!mostraQR)}
+            className="w-full text-center text-blue-600 hover:text-blue-800 font-semibold text-sm mb-3"
+          >
+            {mostraQR ? '▼ Ocultar' : '▶ Ver'} Código QR para Compartir
+          </button>
+
+          {mostraQR && (
+            <div className="bg-white p-4 rounded-lg border border-blue-200 text-center space-y-3">
+              <p className="text-sm text-gray-600">Escanea este código para registrarte</p>
+              <div className="flex justify-center bg-white p-3 rounded border-2 border-gray-200">
+                <QRCode
+                  ref={qrRef}
+                  value={`http://localhost:3000/registro`}
+                  size={256}
+                  level="H"
+                  includeMargin={true}
+                />
+              </div>
+              <p className="text-xs text-gray-500">
+                URL: http://localhost:3000/registro
+              </p>
+              <button
+                onClick={descargarQR}
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded text-sm"
+              >
+                📥 Descargar QR
+              </button>
+            </div>
           )}
         </div>
 
