@@ -19,8 +19,10 @@ function App() {
   const [registroDirecto, setRegistroDirecto] = useState(false)
 
   useEffect(() => {
-    // Check direct URL routes
-    if (window.location.pathname === '/registro') {
+    // Check hash routes (works with SPA)
+    const hash = window.location.hash.slice(1) || ''
+
+    if (hash === 'registro') {
       setCurrentPage('registro')
       setRegistroDirecto(true)
       setLoading(false)

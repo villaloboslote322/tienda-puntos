@@ -256,14 +256,14 @@ export default function RegistroCliente() {
               <div className="flex justify-center bg-white p-3 rounded border-2 border-gray-200">
                 <QRCode
                   ref={qrRef}
-                  value={`http://localhost:3000/registro`}
+                  value={`http://localhost:3000/#registro`}
                   size={256}
                   level="H"
                   includeMargin={true}
                 />
               </div>
               <p className="text-xs text-gray-500">
-                URL: http://localhost:3000/registro
+                URL: http://localhost:3000/#registro
               </p>
               <button
                 onClick={descargarQR}
