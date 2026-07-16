@@ -98,4 +98,25 @@ router.put(
   }
 );
 
+// PUT /api/usuarios/:id/cambiar-password - change another user's password (admin only)
+const cambiarPasswordSchema = z.object({
+  passwordNueva: z.string().min(6),
+});
+
+router.put(
+  '/:id/cambiar-password',
+  authMiddleware,
+  adminOnly,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = String(req.params.id);
+      const datos = cambiarPasswordSchema.parse(req.body);
+      const usuario = await usuariosService.cambiarPasswordAdmin(id, datos.passwordNueva);
+      res.json(usuario);
+    } catch (error: any) {
+      next(new AppError(400, error.message));
+    }
+  }
+);
+
 export default router;

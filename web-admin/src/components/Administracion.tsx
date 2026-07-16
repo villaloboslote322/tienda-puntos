@@ -44,6 +44,15 @@ export default function Administracion({ token, usuarioActual }: AdministracionP
   })
   const [adminLoading, setAdminLoading] = useState(false)
 
+  // Cambiar contraseña de otro usuario
+  const [usuarioSeleccionado, setUsuarioSeleccionado] = useState<Usuario | null>(null)
+  const [mostraCambioPassword, setMostraCambioPassword] = useState(false)
+  const [cambioPasswordForm, setCambioPasswordForm] = useState({
+    passwordNueva: '',
+    passwordConfirm: '',
+  })
+  const [cambioPasswordLoading, setCambioPasswordLoading] = useState(false)
+
   useEffect(() => {
     fetchUsuarios()
   }, [token])
@@ -171,6 +180,54 @@ export default function Administracion({ token, usuarioActual }: AdministracionP
     } catch (err: any) {
       setError(err.response?.data?.message || 'Error al activar usuario')
     }
+  }
+
+  const handleCambioPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setSuccess('')
+
+    if (!usuarioSeleccionado) {
+      setError('No hay usuario seleccionado')
+      return
+    }
+
+    if (cambioPasswordForm.passwordNueva !== cambioPasswordForm.passwordConfirm) {
+      setError('Las contraseñas no coinciden')
+      return
+    }
+
+    if (cambioPasswordForm.passwordNueva.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres')
+      return
+    }
+
+    setCambioPasswordLoading(true)
+    try {
+      await api.put(
+        `/api/usuarios/${usuarioSeleccionado.id}/cambiar-password`,
+        { passwordNueva: cambioPasswordForm.passwordNueva },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
+
+      setSuccess(`Contraseña cambiada para ${usuarioSeleccionado.nombre}`)
+      setCambioPasswordForm({ passwordNueva: '', passwordConfirm: '' })
+      setMostraCambioPassword(false)
+      setUsuarioSeleccionado(null)
+      setTimeout(() => setSuccess(''), 3000)
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Error al cambiar contraseña')
+    } finally {
+      setCambioPasswordLoading(false)
+    }
+  }
+
+  const abrirCambioPassword = (usuario: Usuario) => {
+    setUsuarioSeleccionado(usuario)
+    setCambioPasswordForm({ passwordNueva: '', passwordConfirm: '' })
+    setMostraCambioPassword(true)
   }
 
   if (loading) {
@@ -428,6 +485,12 @@ export default function Administracion({ token, usuarioActual }: AdministracionP
                       {new Date(usuario.createdAt).toLocaleDateString('es-AR')}
                     </td>
                     <td className="px-6 py-4 text-sm space-x-2">
+                      <button
+                        onClick={() => abrirCambioPassword(usuario)}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs"
+                      >
+                        Cambiar Pass
+                      </button>
                       {usuario.id !== usuarioActual.usuarioId && (
                         <>
                           {usuario.activo ? (
@@ -455,6 +518,78 @@ export default function Administracion({ token, usuarioActual }: AdministracionP
           </div>
         )}
       </div>
+
+      {/* Modal Cambiar Contraseña */}
+      {mostraCambioPassword && usuarioSeleccionado && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full mx-4">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">
+              Cambiar Contraseña: {usuarioSeleccionado.nombre}
+            </h2>
+
+            <form onSubmit={handleCambioPassword} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nueva Contraseña
+                </label>
+                <input
+                  type="password"
+                  value={cambioPasswordForm.passwordNueva}
+                  onChange={(e) =>
+                    setCambioPasswordForm({ ...cambioPasswordForm, passwordNueva: e.target.value })
+                  }
+                  placeholder="Mín. 6 caracteres"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Confirmar Contraseña
+                </label>
+                <input
+                  type="password"
+                  value={cambioPasswordForm.passwordConfirm}
+                  onChange={(e) =>
+                    setCambioPasswordForm({ ...cambioPasswordForm, passwordConfirm: e.target.value })
+                  }
+                  placeholder="Confirmar contraseña"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                  required
+                />
+              </div>
+
+              {error && (
+                <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
+                  {error}
+                </div>
+              )}
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="submit"
+                  disabled={cambioPasswordLoading}
+                  className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg disabled:bg-gray-400"
+                >
+                  {cambioPasswordLoading ? 'Cambiando...' : 'Cambiar Contraseña'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMostraCambioPassword(false)
+                    setUsuarioSeleccionado(null)
+                    setError('')
+                  }}
+                  className="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 rounded-lg"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -157,6 +157,31 @@ export class UsuariosService {
       activo: usuario.activo,
     };
   }
+
+  async cambiarPasswordAdmin(usuarioId: string, passwordNueva: string) {
+    const usuario = await prisma.usuario.findUnique({
+      where: { id: usuarioId },
+    });
+
+    if (!usuario) {
+      throw new Error('Usuario no encontrado');
+    }
+
+    const hashedPassword = await bcrypt.hash(passwordNueva, 10);
+
+    const actualizado = await prisma.usuario.update({
+      where: { id: usuarioId },
+      data: { password: hashedPassword },
+    });
+
+    logger.info(`Password changed for user: ${actualizado.email}`);
+    return {
+      id: actualizado.id,
+      email: actualizado.email,
+      nombre: actualizado.nombre,
+      activo: actualizado.activo,
+    };
+  }
 }
 
 export const usuariosService = new UsuariosService();
