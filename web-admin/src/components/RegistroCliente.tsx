@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
-import QRCode from 'qrcode.react'
+import QRCodeStyling from 'qr-code-styling'
 
 export default function RegistroCliente() {
   const [formData, setFormData] = useState({
@@ -15,7 +15,46 @@ export default function RegistroCliente() {
   const [success, setSuccess] = useState('')
   const [clienteRegistrado, setClienteRegistrado] = useState<any>(null)
   const [mostraQR, setMostraQR] = useState(false)
-  const qrRef = useRef<any>(null)
+  const qrContainerRef = useRef<HTMLDivElement>(null)
+  const qrCodeRef = useRef<any>(null)
+
+  // Generar QR
+  useEffect(() => {
+    if (mostraQR && qrContainerRef.current && !qrCodeRef.current) {
+      qrCodeRef.current = new QRCodeStyling({
+        width: 256,
+        height: 256,
+        data: 'http://localhost:3000/#registro',
+        margin: 10,
+        qrOptions: {
+          typeNumber: 0,
+          mode: 'Byte',
+          errorCorrectionLevel: 'H',
+        },
+        imageOptions: {
+          hideBackgroundDots: true,
+          imageSize: 0.4,
+          margin: 0,
+        },
+        dotsOptions: {
+          color: '#222222',
+          type: 'rounded',
+        },
+        cornersSquareOptions: {
+          color: '#2563eb',
+          type: 'extra-rounded',
+        },
+        cornersDotOptions: {
+          color: '#2563eb',
+          type: 'dot',
+        },
+        backgroundOptions: {
+          color: '#ffffff',
+        },
+      })
+      qrCodeRef.current.append(qrContainerRef.current)
+    }
+  }, [mostraQR])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -26,12 +65,8 @@ export default function RegistroCliente() {
   }
 
   const descargarQR = () => {
-    if (qrRef.current) {
-      const url = qrRef.current.toDataURL('image/png')
-      const link = document.createElement('a')
-      link.href = url
-      link.download = 'qr-registro-tienda-puntos.png'
-      link.click()
+    if (qrCodeRef.current) {
+      qrCodeRef.current.download({ name: 'qr-registro-tienda-puntos', extension: 'png' })
     }
   }
 
@@ -253,15 +288,10 @@ export default function RegistroCliente() {
           {mostraQR && (
             <div className="bg-white p-4 rounded-lg border border-blue-200 text-center space-y-3">
               <p className="text-sm text-gray-600">Escanea este código para registrarte</p>
-              <div className="flex justify-center bg-white p-3 rounded border-2 border-gray-200">
-                <QRCode
-                  ref={qrRef}
-                  value={`http://localhost:3000/#registro`}
-                  size={256}
-                  level="H"
-                  includeMargin={true}
-                />
-              </div>
+              <div
+                ref={qrContainerRef}
+                className="flex justify-center py-4"
+              />
               <p className="text-xs text-gray-500">
                 URL: http://localhost:3000/#registro
               </p>
